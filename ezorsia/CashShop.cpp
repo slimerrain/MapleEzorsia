@@ -132,7 +132,7 @@ void CashShop::UpdateResolution(int game_width, int game_height) {
 	Memory::WriteInt(0x00469414 + 1, 310);	// 3 Buttons, Chatbar, IGN Wall S
 	Memory::WriteInt(0x00469419 + 1, 255);	// 3 Buttons, Chatbar, IGN Wall E
 	Memory::WriteInt(0x00469488 + 1, 426);	// Items List Wall Y
-	Memory::WriteInt(0x0046948D + 1, 412);	// Items List Wall X
+	Memory::WriteInt(0x0046948D + 1, game_height - 188);	// Items List Wall X
 	Memory::WriteByte(0x004BA74B + 2, 53);	// BtBuy Y
 	Memory::WriteByte(0x004BA75F + 2, 78);	// BtBuy X
 	Memory::WriteByte(0x004BA7F1 + 2, 53);	// BtGift Y

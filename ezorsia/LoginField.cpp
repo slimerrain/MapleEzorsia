@@ -61,10 +61,10 @@ void LoginField::UpdateResolution()
 	Memory::WriteByte(0x00620829 + 1, -127); // x-pos ; register button
 
 	// Login error notice dialogue
-	Memory::WriteInt(0x0060F79B + 1, (Client::m_nGameHeight / 2) - (324 / 2)); // animate x
-	Memory::WriteInt(0x0060F7A4 + 1, (Client::m_nGameHeight / 2) - (324 / 2)); // x
-	Memory::WriteInt(0x0060F7AC + 1, (Client::m_nGameWidth / 2) - (204 / 2)); // animate y
-	Memory::WriteInt(0x0060F7B5 + 1, (Client::m_nGameWidth / 2) - (204 / 2)); // y
+	Memory::WriteInt(0x0060F79B + 1, (Client::m_nGameHeight / 2) - 150); // animate x
+	Memory::WriteInt(0x0060F7A4 + 1, (Client::m_nGameHeight / 2) - 130); // x
+	Memory::WriteInt(0x0060F7AC + 1, (Client::m_nGameWidth / 2) - 201); // animate y
+	Memory::WriteInt(0x0060F7B5 + 1, (Client::m_nGameWidth / 2) - 181); // y
 
 	//Memory::WriteInt(0x00604121 + 1, -(Client::m_nGameHeight + 590)); // Character Y; FFFFFB3E (217)
 	//Memory::WriteInt(0x00604126 + 1, -(Client::m_nGameWidth - 1248)); // Character X; 0FFFFFEDE (121)

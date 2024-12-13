@@ -91,6 +91,7 @@ void Client::UpdateResolution() {
 	Memory::CodeCave(AdjustStatusBar, 0x008CFD55, 5);
 	Memory::CodeCave(AdjustStatusBarBG, 0x008D1F65, 5);
 	Memory::CodeCave(AdjustStatusBarInput, 0x008D217C, 9);
+	Memory::CodeCave(AdjustStatusBarInput, 0x008D217C, 9);
 
 	Memory::WriteInt(0x009F7B1D + 1, m_nGameHeight);//push 600
 	Memory::WriteInt(0x009F7B23 + 1, m_nGameWidth);	//push 800 ; CWvsApp::InitializeGr2D
@@ -110,10 +111,10 @@ void Client::UpdateResolution() {
 
 	Memory::WriteInt(0x007B2EA0 + 3, -m_nGameWidth + 6); //lea eax,[eax+ecx-797] ; CTemporaryStatView::ShowToolTip
 	Memory::WriteInt(0x007B3087 + 3, -m_nGameWidth + 6); //lea eax,[eax+ecx-797] ; CTemporaryStatView::FindIcon
-	Memory::WriteInt(0x007B2C97 + 2, m_nGameHeight / 2 - 23);	//sub ebx,277 ; Skill icon buff y-pos
-	Memory::WriteInt(0x007B2CB5 + 3, m_nGameWidth / 2 - 3);	//lea eax,[eax+esi+397] ; Skill icon buff x-pos
-	Memory::WriteInt(0x007B2DA0 + 2, m_nGameHeight / 2 - 23);	//sub ebx,277 ; Skill icon cooltime y-pos
-	Memory::WriteInt(0x007B2DBE + 3, m_nGameWidth / 2 - 3);	//lea eax,[eax+esi+397] ; Skill icon cooltime x-pos
+	Memory::WriteInt(0x007B2C97 + 2, (m_nGameHeight - 600)/ 2 + 277);	//sub ebx,277 ; Skill icon buff y-pos
+	Memory::WriteInt(0x007B2CB5 + 3, (m_nGameWidth - 800)/ 2 + 397);	//lea eax,[eax+esi+397] ; Skill icon buff x-pos
+	Memory::WriteInt(0x007B2DA0 + 2, (m_nGameHeight - 600)/ 2 + 277);	//sub ebx,277 ; Skill icon cooltime y-pos
+	Memory::WriteInt(0x007B2DBE + 3, (m_nGameWidth - 800)/ 2 + 397);	//lea eax,[eax+esi+397] ; Skill icon cooltime x-pos
 
 	Memory::WriteInt(0x008D1793 + 1, m_nGameHeight + 1);//add eax,533
 	Memory::WriteInt(0x008DF782 + 2, m_nGameHeight + 1);//add esi,533
@@ -129,7 +130,7 @@ void Client::UpdateResolution() {
 	Memory::WriteInt(0x004CC160 + 1, m_nGameWidth);	//mov [ebp-16],800 ; CreateWnd
 	Memory::WriteInt(0x004CC2C5 + 2, m_nGameHeight);//cmp ecx,600
 	Memory::WriteInt(0x004CC2B0 + 1, m_nGameWidth);	//mov eax,800 ; CreateWnd
-	Memory::WriteInt(0x004D59B2 + 1, m_nGameHeight);//mov eax,800
+	Memory::WriteInt(0x004D59B2 + 1, m_nGameWidth);//mov eax,800
 	Memory::WriteInt(0x004D599D + 1, m_nGameWidth);	//mov eax,800 ; CreateWnd
 	Memory::WriteInt(0x0085F36C + 2, m_nGameWidth);	//cmp edx,800
 	Memory::WriteInt(0x0085F374 + 1, m_nGameWidth - 80);	//mov ecx,720 ; CreateDlg
@@ -140,8 +141,7 @@ void Client::UpdateResolution() {
 	Memory::WriteInt(0x009966D2 + 1, m_nGameWidth - 100);	//mov edx,700 ; CreateDlg
 	Memory::WriteInt(0x009A3E7F + 1, m_nGameHeight);//mov edx,600
 	Memory::WriteInt(0x009A3E72 + 1, m_nGameWidth);	//mov edx,800 ; CreateDlg
-	Memory::WriteInt(0x0045B898 + 1, m_nGameHeight - 25);	//push 575
-	Memory::WriteInt(0x0045B97E + 1, m_nGameWidth);	//push 800 ; RelMove?
+	Memory::WriteInt(0x0045B898 + 1, m_nGameWidth - 225);	//push 575
 	Memory::WriteInt(0x004D9BD1 + 1, m_nGameWidth);	//push 800
 	Memory::WriteInt(0x004D9C37 + 1, m_nGameWidth);	//push 800
 	Memory::WriteInt(0x005386F0 + 1, m_nGameHeight);//push 600
@@ -221,8 +221,6 @@ void Client::UpdateResolution() {
 	Memory::WriteInt(0x00538373 + 1, floor(-m_nGameWidth / 2));	//push -400	; RelMove?
 	Memory::WriteInt(0x0055BB2F + 1, floor(-m_nGameHeight / 2));//push -300
 	Memory::WriteInt(0x0055BB35 + 1, floor(-m_nGameWidth / 2));	//push -400 ; RelMove?
-	Memory::WriteInt(0x005F481E + 1, floor(-m_nGameHeight / 2));//push -300
-	Memory::WriteInt(0x005F4824 + 1, floor(-m_nGameWidth / 2));	//push -400 ; RelMove?
 	Memory::WriteInt(0x004372B1 + 1, floor(-m_nGameHeight / 2));//push -300
 	Memory::WriteInt(0x004372B6 + 1, floor(-m_nGameWidth / 2));	//push -400 ; RelMove?
 	Memory::WriteInt(0x006CE3AB + 1, m_nGameWidth);	//push 800
@@ -298,6 +296,9 @@ void Client::UpdateResolution() {
 	// 247 (height of context menu) + 73 (height of status bar)
 	Memory::WriteInt(0x0084A5B7 + 1, m_nGameHeight - (247 + 73));	// ShortCut Y
 
+	// CScreenShot::SaveFullScreenToJpg
+	Memory::WriteInt(0x00744DA6 + 1, 4 * m_nGameWidth * m_nGameHeight);
+
 	// CFadeWnd__SetOption
 	const int yOffset[] = { // original y = 508
 		0x00523BB1,// Buddy CH
@@ -333,7 +334,7 @@ void Client::UpdateResolution() {
 	//get array length of yOffset
 	const int yOffsetLength = std::size(yOffset);
 	for (int i = 0; i < yOffsetLength; i++) {
-		Memory::WriteInt(yOffset[i] + 1, 610);
+		Memory::WriteInt(yOffset[i] + 1, m_nGameHeight - 102);
 		Memory::WriteInt(xOffset[i] + 1, 463);
 	}
 
@@ -355,11 +356,11 @@ void Client::UpdateResolution() {
 	Memory::WriteInt(0x0045A5CB + 1, m_nGameWidth); //push 800 ; CAvatarMegaphone ; CreateWnd
 
 
-	if (m_nGameHeight != 600 || m_nGameWidth != 800) {
-		Memory::WriteInt(0x005F481E + 1, m_nGameHeight);//push -300
-		Memory::WriteInt(0x005F4824 + 1, m_nGameWidth); //push -400
-		Logger::Info("[Client] Custom resolution found, hiding login screen book frame");
-	}
+	// if (m_nGameHeight != 600 || m_nGameWidth != 800) {
+	// 	Memory::WriteInt(0x005F481E + 1, m_nGameHeight);//push -300
+	// 	Memory::WriteInt(0x005F4824 + 1, m_nGameWidth); //push -400
+	// 	Logger::Info("[Client] Custom resolution found, hiding login screen book frame");
+	// }
 }
 
 void Client::ApplyMods() {
