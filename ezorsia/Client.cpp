@@ -382,7 +382,7 @@ void Client::ApplyMods() {
 	//Memory::WriteByte(0x0045230D, -127)
 
 	// Genderless equips
-	//Memory::FillBytes(0x00460AED, (BYTE)Memory::ASM::nop, 2);
+	Memory::FillBytes(0x00460AED, (BYTE)Memory::ASM::nop, 2);
 
 	// Player emotion delay (milliseconds)
 	//Memory::WriteInt(0x00A244AF, 100);
@@ -407,4 +407,7 @@ void Client::ApplyMods() {
 	Memory::WriteInt(0x00412125 + 1, 30000);
 	Memory::WriteInt(0x00412282 + 2, 30000);
 	Memory::WriteInt(0x00412303 + 2, 30000);
+
+	//Allow female characters to open Engagement Ring Box!!
+	Memory::FillBytes(0x00A0FCC1, 0x90, 6);
 }
