@@ -142,6 +142,9 @@ void CashShop::UpdateResolution(int game_width, int game_height) {
 	Memory::WriteInt(0x0046944C + 1, 163);	// Item Inv, Item Tabs Wall S
 	Memory::WriteInt(0x00469451 + 1, 255);	// Item Inv, Item Tabs Wall E
 
+	// Fix Cash Stop Tool Tip (follows cursor on item hover)
+	Memory::WriteInt(0x004B7379 + 3, 0);
+
 	// 157 = offset from the top of the base background
 	Memory::WriteInt(0x004694AF + 1, responsive_y + 157);	// "Hot" Items Y
 	// 690 = offset from the left of the base background

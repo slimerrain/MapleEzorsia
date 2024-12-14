@@ -90,6 +90,9 @@
     <ClInclude Include="Hooks.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="QuickSlot.h">
+      <Filter>Header Files\mods</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -118,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="Memory.cpp">
       <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="QuickSlot.cpp">
+      <Filter>Source Files\mods</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

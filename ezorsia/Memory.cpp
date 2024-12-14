@@ -2,6 +2,8 @@
 #include "Memory.h"
 #include "detours.h"
 
+// 0x90 is NOP
+
 bool Memory::SetHook(bool attach, void** ptrTarget, void* ptrDetour)
 {
 	DetourTransactionBegin();

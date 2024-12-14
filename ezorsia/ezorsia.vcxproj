@@ -183,6 +183,7 @@
     <ClInclude Include="LoginField.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="NMCO.h" />
+    <ClInclude Include="QuickSlot.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="syelog.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="LoginField.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="NMCO.cpp" />
+    <ClCompile Include="QuickSlot.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

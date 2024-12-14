@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Client.h"
 #include "CashShop.h"
+#include "QuickSlot.h"
 #include "LoginField.h"
 #include "Logger.h"
 
@@ -85,9 +86,6 @@ void Client::EnableNewIGCipher() {
 void Client::UpdateResolution() {
 	nStatusBarY = m_nGameHeight - 578;
 
-	LoginField::UpdateResolution();
-	CashShop::UpdateResolution(m_nGameWidth, m_nGameHeight);
-
 	Memory::CodeCave(AdjustStatusBar, 0x008CFD55, 5);
 	Memory::CodeCave(AdjustStatusBarBG, 0x008D1F65, 5);
 	Memory::CodeCave(AdjustStatusBarInput, 0x008D217C, 9);
@@ -120,8 +118,6 @@ void Client::UpdateResolution() {
 	Memory::WriteInt(0x008DF782 + 2, m_nGameHeight + 1);//add esi,533
 	Memory::WriteInt(0x008D179A + 1, 799); //push 647
 	Memory::WriteInt(0x008DF7F8 + 1, 799); //push 647
-	Memory::WriteInt(0x008DE8EE + 2, (-m_nGameWidth + 32) / 2); //lea edi,[eax-647]
-	Memory::WriteInt(0x008DE8E5 + 2, -m_nGameWidth + 228); //lea ebx,[eax-427]
 
 	Memory::WriteInt(0x0043717B + 1, m_nGameHeight);//mov edi,600
 	Memory::WriteInt(0x00437181 + 1, m_nGameWidth);	//mov esi,800 ; CreateWnd
@@ -279,26 +275,21 @@ void Client::UpdateResolution() {
 	Memory::WriteInt(0x009B76BD + 3, floor(-m_nGameHeight / 2));	//push -300
 	Memory::WriteInt(0x009B76CB + 3, floor(m_nGameHeight / 2));	//push 300
 
-	// ui status bar approximately 80px in height, add extra spacing for padding
-	// exp/meso feed, bottom right
-	Memory::WriteInt(0x0089B639 + 1, m_nGameHeight - 100);	//Origin Y
-	Memory::WriteInt(0x0089B6F7 + 1, m_nGameWidth - 300);	//Origin X
-	Memory::WriteInt(0x0089B796 + 1, m_nGameHeight - 100);	//Origin Y (fixes reset)
-	Memory::WriteInt(0x0089BA03 + 1, m_nGameWidth - 300);	//Origin X (fixes reset)
+	// ====================================================
+	// ================ Player Shop Edits ================= 
+	// ====================================================
 
-	// 710 (width to menu button) - (82 (width of context menu) / 2) 
-	Memory::WriteInt(0x00849E3F + 1, 710 - 87 / 2);	// Menu 
-	// 140 (height of context menu) + 73 (height of status bar)
-	Memory::WriteInt(0x00849E39 + 1, m_nGameHeight - (140 + 73));	// Menu Y
+	Memory::WriteByte(0x006FDE5D + 2, 0x0A); // Increases GetItemIndexFromPoint
+	Memory::WriteByte(0x006FDE5D + 3, 0x02); // Increases GetItemIndexFromPoint
+	Memory::WriteByte(0x006FC327 + 3, 0xF1); // Increase Drawn items
+	Memory::WriteByte(0x006FAE41 + 1, 0x61); // Scrollbar Vertical length
+	Memory::WriteByte(0x006FAE41 + 2, 0x01); // Scrollbar Vertical length
+	Memory::WriteByte(0x006FDEA1 + 2, 0xF8); // Scrollbar size adjust 
 
-	// 766 (width to menu button) - (87 (width of context menu) / 2)
-	Memory::WriteInt(0x0084A5BD + 1, 766 - 87 / 2);	// ShortCut Menu X
-	// 247 (height of context menu) + 73 (height of status bar)
-	Memory::WriteInt(0x0084A5B7 + 1, m_nGameHeight - (247 + 73));	// ShortCut Y
-
-	// CScreenShot::SaveFullScreenToJpg
-	Memory::WriteInt(0x00744DA6 + 1, 4 * m_nGameWidth * m_nGameHeight);
-
+	// ====================================================
+	// ============= Notification Popup Edits ============= 
+	// ====================================================
+	
 	// CFadeWnd__SetOption
 	const int yOffset[] = { // original y = 508
 		0x00523BB1,// Buddy CH
@@ -338,6 +329,50 @@ void Client::UpdateResolution() {
 		Memory::WriteInt(xOffset[i] + 1, 463);
 	}
 
+	// ============================================
+	// ============= Status Bar Edits ============= 
+	// ============================================
+	  
+	// ui status bar approximately 80px in height, add extra spacing for padding
+	// exp/meso feed, bottom right
+	Memory::WriteInt(0x0089B639 + 1, m_nGameHeight - 100);	//Origin Y
+	Memory::WriteInt(0x0089B6F7 + 1, m_nGameWidth - 300);	//Origin X
+	Memory::WriteInt(0x0089B796 + 1, m_nGameHeight - 100);	//Origin Y (fixes reset)
+	Memory::WriteInt(0x0089BA03 + 1, m_nGameWidth - 300);	//Origin X (fixes reset)
+
+	// 140 (height of context menu) + 73 (height of status bar)
+	Memory::WriteInt(0x00849E39 + 1, m_nGameHeight - (140 + 73));	// Menu Y
+
+	// 766 (width to menu button) - (87 (width of context menu) / 2)
+	Memory::WriteInt(0x0084A5BD + 1, 766 - 87 / 2);	// ShortCut Menu X
+	// 247 (height of context menu) + 73 (height of status bar)
+	Memory::WriteInt(0x0084A5B7 + 1, m_nGameHeight - (247 + 73));	// ShortCut Menu Title Y
+
+	// Status Bar: Trade Button
+	Memory::FillBytes(0x008D3068, 0x90, 3); //  Just get rid of it.... not being used
+
+	// Status Bar: Cash Shop Button
+	Memory::WriteInt(0x008D2FB3 +1, 0x23D); // Adjust Cash Shop Button x Axis
+
+	// Status Bar: Menu Button
+	Memory::WriteInt(0x008D3124 +1, 0x288); //Adjust Menu Button x Axis
+
+	// Status Bar: Shortcut Button
+	Memory::WriteInt(0x008D31EC + 1, 0x2D3); //Adjust Shortcut x Axis
+
+	// Status Bar: Menu Pop-Ups
+	Memory::WriteInt(0x00849E3F + 1, 0x27D); // Adjust Game Menu Pop-up x Axis
+	Memory::WriteInt(0x0084A5B7 + 1, 0x1B7); // Adjust Shortcut Pop-up x Axis
+	Memory::WriteByte(0x0084A60A + 1, 0xF4); // Adjust Shortcut Menu y offset
+	Memory::WriteByte(0x0084A60A + 2, 0x00); // ???
+
+	// ============================================
+	// ============= View Box Edits ===============
+	// ============================================
+
+	// CScreenShot::SaveFullScreenToJpg
+	Memory::WriteInt(0x00744DA6 + 1, 4 * m_nGameWidth * m_nGameHeight);
+
 	Memory::WriteInt(0x0055BB2F + 1, floor(-m_nGameHeight / 2));	// LimitedView::Init Y
 	Memory::WriteInt(0x0055BB35 + 1, floor(-m_nGameWidth / 2));	// LimitedView::Init X
 
@@ -355,12 +390,19 @@ void Client::UpdateResolution() {
 	Memory::WriteInt(0x0045B97E + 1, m_nGameWidth + 100); //push 800 ; CAvatarMegaphone::ByeAvatarMegaphone
 	Memory::WriteInt(0x0045A5CB + 1, m_nGameWidth); //push 800 ; CAvatarMegaphone ; CreateWnd
 
+	// On Keybinds, tooltip will follow cursor
+	Memory::WriteByte(0x008339A1 + 2, 0x2C);
 
-	// if (m_nGameHeight != 600 || m_nGameWidth != 800) {
-	// 	Memory::WriteInt(0x005F481E + 1, m_nGameHeight);//push -300
-	// 	Memory::WriteInt(0x005F4824 + 1, m_nGameWidth); //push -400
-	// 	Logger::Info("[Client] Custom resolution found, hiding login screen book frame");
-	// }
+	Memory::WriteByte(0x009516C2 + 1, 0x89); // Point-blank Arrow & Star attacks
+	Memory::WriteByte(0x00951347 + 1, 0x1C); // Targetless Assaulter skill
+
+	// ============================================
+	// ================ Other Edits ===============
+	// ============================================
+
+	LoginField::UpdateResolution();
+	CashShop::UpdateResolution(m_nGameWidth, m_nGameHeight);
+	QuickSlot::UpdateResolution(m_nGameWidth, m_nGameHeight);
 }
 
 void Client::ApplyMods() {
@@ -375,6 +417,7 @@ void Client::ApplyMods() {
 
 	// CLogo start-up animation
 	Memory::FillBytes(0x0062EE54, 0x90, 21);
+
 	// Typable PIN
 	//Memory::FillBytes(0x004CA8BA, 0x90, 2);
 
@@ -410,4 +453,32 @@ void Client::ApplyMods() {
 
 	//Allow female characters to open Engagement Ring Box!!
 	Memory::FillBytes(0x00A0FCC1, 0x90, 6);
+
+	// Allow Cash Items to be Traded
+	Memory::FillBytes(0x004F3FB8, 0x90, 6);
+	Memory::FillBytes(0x004F3FC4, 0x90, 6);
+
+	// ============================================
+	// ================ Chat Edits ================
+	// ============================================
+	
+	// Allow Latin / European Characters in Game Chat
+	// TranslateMessage
+	Memory::WriteByte(0x009E7E77 + 2, 0xFF);
+	// IME
+	Memory::FillBytes(0x009E85FC, 0x90, 2); //ty chinese friends
+	// OnGroupMessage
+	Memory::FillBytes(0x00531EE8, 0x90, 9); //ty chinese friends
+	Memory::FillBytes(0x00531EFF, 0x90, 3);
+	// OnKey
+	Memory::FillBytes(0x008D54A6, 0x90, 9); //ty chinese friends
+	Memory::FillBytes(0x008D54BD, 0x90, 3);
+	// OnChat
+	Memory::FillBytes(0x00937225, 0x90, 9); //ty chinese friends
+	Memory::FillBytes(0x00937249, 0x90, 3);
+	// Allow Character Name
+	Memory::FillBytes(0x007A015D, 0x90, 2); //ty chinese friends
+	// Allow Paste
+	Memory::FillBytes(0x04CAE7D, 0x90, 2); //ty chinese friends
+	Memory::WriteByte(0x004CAE8F, 0xEB); //ty chinese friends
 }
